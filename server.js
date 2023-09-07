@@ -1,5 +1,29 @@
 import { ApolloServer, gql } from 'apollo-server';
+let tweets = [
+  {
+    id: '1',
+    text: 'first one!',
+    userId: '2',
+  },
+  {
+    id: '2',
+    text: 'second one',
+    userId: '1',
+  },
+];
 
+let users = [
+  {
+    id: '1',
+    firstName: 'nico',
+    lastName: 'las',
+  },
+  {
+    id: '2',
+    firstName: 'Elon',
+    lastName: 'Mask',
+  },
+];
 const typeDefs = gql`
   type User {
     id: ID!
@@ -22,7 +46,18 @@ const typeDefs = gql`
   }
 `;
 
-const server = new ApolloServer({ typeDefs });
+const resolvers = {
+  Query: {
+    allTweets() {
+      return tweets;
+    },
+    tweet(root, { id }) {
+      return tweets.find((tweet) => tweet.id === id);
+    },
+  },
+};
+
+const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
-  console.log(`Runnig on ${url}`);
+  console.log(`Running on ${url}`);
 });

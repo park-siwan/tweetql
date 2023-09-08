@@ -1,16 +1,16 @@
 import { ApolloServer, gql } from 'apollo-server';
 import fetch from 'node-fetch';
+
 let tweets = [
   {
     id: '1',
     text: 'first one!',
     userId: '2',
-    userId: '1',
   },
   {
     id: '2',
     text: 'second one',
-    userId: '2',
+    userId: '1',
   },
 ];
 
@@ -26,6 +26,7 @@ let users = [
     lastName: 'Mask',
   },
 ];
+
 const typeDefs = gql`
   type User {
     id: ID!
@@ -37,7 +38,7 @@ const typeDefs = gql`
     fullName: String!
   }
   """
-  Twwet object represents a resource for a Tweet
+  Tweet object represents a resource for  a Tweet
   """
   type Tweet {
     id: ID!
@@ -75,18 +76,16 @@ const typeDefs = gql`
     synopsis: String
     yt_trailer_code: String!
     language: String!
-
     background_image: String!
     background_image_original: String!
     small_cover_image: String!
     medium_cover_image: String!
     large_cover_image: String!
-    state: String!
-    torrents: String!
-    date_uploaded: String!
-    date_uploaded_unix: String!
   }
 `;
+// GET /api/v1/tweets
+// POST DELETE PUT /api/v1/tweets
+// GET /api/v1/tweet/:id
 
 const resolvers = {
   Query: {
@@ -97,6 +96,7 @@ const resolvers = {
       return tweets.find((tweet) => tweet.id === id);
     },
     allUsers() {
+      console.log('allUsers called!');
       return users;
     },
     allMovies() {
@@ -132,9 +132,15 @@ const resolvers = {
       return `${firstName} ${lastName}`;
     },
   },
+  Tweet: {
+    author({ userId }) {
+      return users.find((user) => user.id === userId);
+    },
+  },
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
+
 server.listen().then(({ url }) => {
   console.log(`Running on ${url}`);
 });

@@ -29,7 +29,7 @@ const typeDefs = gql`
     id: ID!
     firstName: String!
     lastName: String!
-    # fullName: String!
+    fullName: String!
   }
   type Tweet {
     id: ID!
@@ -37,7 +37,7 @@ const typeDefs = gql`
     author: User
   }
   type Query {
-    allUsers: [User]!
+    allUsers: [User!]!
     allTweets: [Tweet!]!
     tweet(id: ID!): Tweet
   }
@@ -73,6 +73,11 @@ const resolvers = {
       if (!tweet) return false;
       tweets = tweets.filter((tweet) => tweet.id !== id);
       return true;
+    },
+  },
+  User: {
+    fullName({ firstName, lastName }) {
+      return `${firstName} ${lastName}`;
     },
   },
 };

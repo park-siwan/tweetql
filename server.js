@@ -1,11 +1,23 @@
 import { ApolloServer, gql } from 'apollo-server';
 
+const tweets = [
+  {
+    id: '1',
+    text: 'first one!',
+  },
+  {
+    id: '2',
+    text: 'second one',
+  },
+];
+
+//GraphQL Schema 정의 언어
 const typeDefs = gql`
   type User {
     id: ID!
     firstName: String!
     lastName: String!
-    fullName: String!
+    # fullName: String!
   }
   type Tweet {
     id: ID!
@@ -15,6 +27,7 @@ const typeDefs = gql`
   type Query {
     allTweets: [Tweet!]!
     tweet(id: ID!): Tweet
+    ping: String!
   }
   type Mutation {
     postTweet(text: String!, userId: ID!): Tweet!
@@ -22,7 +35,15 @@ const typeDefs = gql`
   }
 `;
 
-const server = new ApolloServer({ typeDefs });
+const resolvers = {
+  Query: {
+    allTweets() {
+      return tweets;
+    },
+  },
+};
+
+const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
   console.log(`Runnig on ${url}`);
 });
